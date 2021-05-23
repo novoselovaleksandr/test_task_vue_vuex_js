@@ -10,7 +10,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import channels from './components//channels/channels.vue'
 import telecasts from './components/telecasts/telecasts'
 import { mapGetters, mapActions } from 'vuex'
@@ -23,54 +22,20 @@ export default {
   },
   data () {
     return {
-      channels: [],
       telecasts: [],
       telecastsShow: false
     }
   },
-  computed: mapGetters(['allChannels']),
+  computed: mapGetters(['allChannels', 'getTelecasts']),
   mounted () {
     this.getChannels()
   },
   methods: {
-    ...mapActions(['getChannels']),
+    ...mapActions(['getChannels', 'getListOfTelecasts']),
     showListOfTelecasts (id) {
-      axios
-        .get('https://epg.domru.ru/program/list', {
-          params: {
-            digit: 1,
-            date_from: '2021-05-23',
-            date_to: '2021-05-24',
-            xvid: [id],
-            domain: 'ekat'
-          }
-        })
-        .then(response => {
-          this.telecasts = response.data[id].map(telecast => {
-            const dateTimeNow = new Date().getTime()
-            const startDate = new Date(telecast.start)
-            const start = `${startDate.getHours()}:${startDate.getMinutes()}`
-
-            const duration = Number(telecast.duration)
-            const endDate = startDate.getTime() + duration * 1000
-
-            const isFinished = endDate < dateTimeNow
-            const isInProgress =
-              endDate > dateTimeNow && startDate.getTime() <= dateTimeNow
-
-            const progress = isInProgress
-              ? Math.floor((endDate - dateTimeNow) / duration / 100 - 1)
-              : 0
-
-            return {
-              title: telecast.title,
-              icon: telecast.icon,
-              start,
-              isFinished,
-              progress
-            }
-          })
-        })
+      this.getListOfTelecasts(id).then(listOfTelecasts => {
+        this.telecasts = listOfTelecasts
+      })
       this.telecastsShow = true
     },
     closeTelecasts () {
@@ -105,6 +70,16 @@ export default {
 
 .telecast_image {
   width: 70px;
+}
+
+.telecast_container {
+  columns: 2;
+}
+
+@media screen and (max-width: 991px) {
+  .telecast_container {
+    columns: 1;
+  }
 }
 
 .telecast_content {
