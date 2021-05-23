@@ -55,64 +55,10 @@ export default {
   margin-top: 60px;
 }
 
-.channel {
-  cursor: pointer;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  flex-basis: 200px;
-  margin: 5px;
+.header {
+  line-height: 1.45;
+  font-size: 2.2rem;
+  font-weight: 600;
 }
 
-.channels_container {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.telecast_image {
-  width: 70px;
-}
-
-.telecast_container {
-  columns: 2;
-}
-
-@media screen and (max-width: 991px) {
-  .telecast_container {
-    columns: 1;
-  }
-}
-
-.telecast_content {
-  display: flex;
-}
-
-.telecast {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  flex-basis: 200px;
-  margin: 5px;
-}
-
-.progressbar {
-  height: 20px;
-  position: relative;
-  background: #555;
-  padding: 3px;
-  box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.3);
-}
-
-.progressbar > span {
-  display: block;
-  height: 100%;
-  background-color: rgb(43, 194, 83);
-  background-image: linear-gradient(
-    center bottom,
-    rgb(43, 194, 83) 37%,
-    rgb(84, 240, 84) 69%
-  );
-  box-shadow: inset 0 2px 9px rgba(255, 255, 255, 0.3),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.4);
-  position: relative;
-  overflow: hidden;
-}
 </style>
