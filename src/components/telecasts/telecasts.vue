@@ -17,8 +17,8 @@
                 telecast.icon
             "
           />
+          <div class="start_time">{{ telecast.start }}</div>
           <div>{{ telecast.title }}</div>
-          <div>{{ telecast.start }}</div>
         </div>
 
         <div class="progressbar" v-if="telecast.progress">
@@ -49,18 +49,25 @@ export default {
 }
 
 .telecast_container {
-  columns: 2;
+display: flex;
+flex-wrap: wrap;
+}
+
+.start_time {
+  margin: 0 10px;
 }
 
 .telecast {
   border: 1px solid #ccc;
   border-radius: 5px;
-  flex-basis: 200px;
+  flex-basis: 49%;
   margin: 5px;
+
 }
 
 .telecast_content {
   display: flex;
+  align-items: center;
 }
 
 .telecast_button {
@@ -70,15 +77,15 @@ export default {
 
 @media screen and (max-width: 991px) {
   .telecast_container {
-    columns: 1;
+    display: block;
   }
 }
 
 .progressbar {
-  height: 20px;
+  height: 6px;
   position: relative;
   background: #555;
-  padding: 3px;
+  padding: 1px;
   box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.3);
 }
 

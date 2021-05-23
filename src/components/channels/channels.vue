@@ -36,5 +36,6 @@ export default {
 .channels_container {
   display: inline-flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 </style>

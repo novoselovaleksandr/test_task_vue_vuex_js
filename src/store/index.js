@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import moment from 'moment'
 
 Vue.use(Vuex)
 
@@ -32,8 +33,8 @@ export default new Vuex.Store({
             .get('https://epg.domru.ru/program/list', {
               params: {
                 digit: 1,
-                date_from: '2021-05-23',
-                date_to: '2021-05-24',
+                date_from: moment().format('YYYY-MM-DD'),
+                date_to: moment().add(1, 'days').format('YYYY-MM-DD'),
                 xvid: [id],
                 domain: 'ekat'
               }
@@ -42,7 +43,8 @@ export default new Vuex.Store({
               const telecastParametrs = response.data[id].map(telecast => {
                 const dateTimeNow = new Date().getTime()
                 const startDate = new Date(telecast.start)
-                const start = `${startDate.getHours()}:${startDate.getMinutes()}`
+
+                const start = telecast.start.split(' ')[1].substring(0, 5)
 
                 const duration = Number(telecast.duration)
                 const endDate = startDate.getTime() + duration * 1000
