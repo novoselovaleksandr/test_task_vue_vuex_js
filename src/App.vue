@@ -1,46 +1,26 @@
 <template>
   <div id="app">
-    <div class="channels_container" v-if="!telecastsShow">
-      <div
-        class="channel"
-        v-for="channel in channels"
-        :key="channel.id"
-        @click="showListOfTelecasts(channel.xvid)"
-      >
-        <h2>{{ channel.title }}</h2>
-        <img :src="'https://epg.domru.ru/' + channel.logo" />
-      </div>
+    <div v-show="!telecastsShow">
+      <channels :channels="allChannels" @clickOnChannel="showListOfTelecasts" />
     </div>
-    <div class="telecast_container" v-if="telecastsShow">
-      <button @click="closeTelecasts">Закрыть</button>
-      <div class="telecast" v-for="telecast in telecasts" :key="telecast.id">
-
-        <div class="telecast_content">
-          <img
-            class="telecast_image"
-            :src="
-              'https://domru.ru/' +
-              'epgservice/ertelecomipfile/pic/' +
-              telecast.icon
-            "
-          />
-          <div>{{ telecast.title }}</div>
-          <div>{{ telecast.start }}</div>
-        </div>
-
-        <div class="progressbar" v-if="telecast.progress">
-          <span :style="`width: ${telecast.progress}%`"></span>
-        </div>
-      </div>
+    <div v-show="telecastsShow">
+      <telecasts @onCloseTelecasts="closeTelecasts" :telecasts="telecasts" />
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import channels from './components//channels/channels.vue'
+import telecasts from './components/telecasts/telecasts'
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'App',
-  components: {},
+  components: {
+    channels,
+    telecasts
+  },
   data () {
     return {
       channels: [],
@@ -48,14 +28,12 @@ export default {
       telecastsShow: false
     }
   },
+  computed: mapGetters(['allChannels']),
   mounted () {
-    axios
-      .get('https://epg.domru.ru/channel/list?domain=ekat')
-      .then((response) => {
-        this.channels = response.data
-      })
+    this.getChannels()
   },
   methods: {
+    ...mapActions(['getChannels']),
     showListOfTelecasts (id) {
       axios
         .get('https://epg.domru.ru/program/list', {
@@ -67,8 +45,8 @@ export default {
             domain: 'ekat'
           }
         })
-        .then((response) => {
-          this.telecasts = response.data[id].map((telecast) => {
+        .then(response => {
+          this.telecasts = response.data[id].map(telecast => {
             const dateTimeNow = new Date().getTime()
             const startDate = new Date(telecast.start)
             const start = `${startDate.getHours()}:${startDate.getMinutes()}`
@@ -77,9 +55,12 @@ export default {
             const endDate = startDate.getTime() + duration * 1000
 
             const isFinished = endDate < dateTimeNow
-            const isInProgress = endDate > dateTimeNow && startDate.getTime() <= dateTimeNow
+            const isInProgress =
+              endDate > dateTimeNow && startDate.getTime() <= dateTimeNow
 
-            const progress = isInProgress ? Math.floor((endDate - dateTimeNow) / duration / 100 - 1) : 0
+            const progress = isInProgress
+              ? Math.floor((endDate - dateTimeNow) / duration / 100 - 1)
+              : 0
 
             return {
               title: telecast.title,
@@ -110,6 +91,7 @@ export default {
 }
 
 .channel {
+  cursor: pointer;
   border: 1px solid #ccc;
   border-radius: 5px;
   flex-basis: 200px;
@@ -130,7 +112,6 @@ export default {
 }
 
 .telecast {
-
   border: 1px solid #ccc;
   border-radius: 5px;
   flex-basis: 200px;
